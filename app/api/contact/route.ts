@@ -2,7 +2,10 @@ import nodemailer from "nodemailer";
 
 export const runtime = "nodejs";
 
-const recipients = ["madhbhad@gmail.com", "henryyimbusiness@gmail.com"];
+const recipients = [
+  "madhbhad@gmail.com",
+  "henryyimbusiness@gmail.com",
+];
 
 type ContactPayload = {
   name?: string;
@@ -32,7 +35,7 @@ export async function POST(request: Request) {
     if (!host || !user || !pass || !from) {
       return Response.json(
         { error: "Email service is not configured." },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
@@ -69,7 +72,7 @@ export async function POST(request: Request) {
         payload.message,
       ].join("\n"),
       html: `
-        <h2>New YB Visuals inquiry</h2>
+        <h2>New YB Visuals Inquiry</h2>
         <p><strong>Name:</strong> ${safe.name}</p>
         <p><strong>Restaurant / Business:</strong> ${safe.businessName}</p>
         <p><strong>Email:</strong> ${safe.email}</p>
@@ -83,23 +86,43 @@ export async function POST(request: Request) {
 
     return Response.json({ ok: true });
   } catch (error) {
-    console.error("Contact form error", error);
-    return Response.json({ error: "Could not send message." }, { status: 500 });
+    console.error("Contact form error:", error);
+    return Response.json(
+      { error: "Could not send message." },
+      { status: 500 }
+    );
   }
 }
 
 function validatePayload(payload: ContactPayload) {
-  if (!payload.name?.trim()) return "Name is required.";
-  if (!payload.businessName?.trim()) return "Restaurant or business name is required.";
+  if (!payload.name?.trim()) {
+    return "Name is required.";
+  }
+
+  if (!payload.businessName?.trim()) {
+    return "Restaurant or business name is required.";
+  }
+
   if (!payload.email?.trim() || !/^\S+@\S+\.\S+$/.test(payload.email)) {
     return "Valid email is required.";
   }
-  if (!payload.phone?.trim()) return "Phone is required.";
-  if (!payload.projectType?.trim()) return "Project type is required.";
-  if (!payload.budget?.trim()) return "Budget is required.";
+
+  if (!payload.phone?.trim()) {
+    return "Phone is required.";
+  }
+
+  if (!payload.projectType?.trim()) {
+    return "Project type is required.";
+  }
+
+  if (!payload.budget?.trim()) {
+    return "Budget is required.";
+  }
+
   if (!payload.message?.trim() || payload.message.trim().length < 10) {
     return "Message must be at least 10 characters.";
   }
+
   return "";
 }
 
