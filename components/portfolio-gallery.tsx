@@ -1,8 +1,7 @@
 "use client";
 
-import { portfolioImages, type PortfolioImage } from "@/lib/content";
+import { portfolioSections, type PortfolioImage } from "@/lib/content";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
 import { useState } from "react";
 
 export function PortfolioGallery() {
@@ -10,39 +9,57 @@ export function PortfolioGallery() {
 
   return (
     <section className="bg-paper">
-      <motion.div
-        layout
-        className="mx-auto grid max-w-[1500px] grid-cols-1 gap-4 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-3 lg:px-10"
-      >
-        {portfolioImages.map((image, index) => (
-          <motion.button
-            type="button"
-            layout
-            key={image.src}
-            className="group border border-ink/12 bg-white p-2 text-left transition duration-300 hover:-translate-y-1 hover:border-brass/60"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{
-              duration: 0.45,
-              delay: Math.min(index * 0.025, 0.18),
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            onClick={() => setActive(image)}
+      <div className="mx-auto max-w-[1500px] px-4 py-10 sm:px-6 lg:px-10">
+        {portfolioSections.map((section, sectionIndex) => (
+          <div
+            className={sectionIndex > 0 ? "mt-16" : undefined}
+            key={section.title}
           >
-            <span className="sr-only">Open restaurant photography sample</span>
-            <span className="relative block aspect-[3/2] overflow-hidden bg-warmgray/35">
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-contain transition duration-500 group-hover:scale-[1.02]"
-              />
-            </span>
-          </motion.button>
+            <div className="mb-6 border-b border-ink/12 pb-4">
+              <p className="eyebrow text-brass">{section.title}</p>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-ink/64">
+                {section.description}
+              </p>
+            </div>
+
+            <motion.div
+              layout
+              className="columns-1 gap-4 sm:columns-2 lg:columns-3"
+            >
+              {section.images.map((image, index) => (
+                <motion.button
+                  type="button"
+                  layout
+                  key={image.src}
+                  className="group mb-4 block w-full break-inside-avoid border border-ink/12 bg-white p-2 text-left transition duration-300 hover:-translate-y-1 hover:border-brass/60"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{
+                    duration: 0.45,
+                    delay: Math.min(index * 0.025, 0.18),
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  onClick={() => setActive(image)}
+                >
+                  <span className="sr-only">
+                    Open {section.title.toLowerCase()} sample
+                  </span>
+
+                  <span className="block overflow-hidden bg-warmgray/35">
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      loading="lazy"
+                      className="block h-auto w-full transition duration-500 group-hover:scale-[1.02]"
+                    />
+                  </span>
+                </motion.button>
+              ))}
+            </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
 
       <AnimatePresence>
         {active ? (
@@ -61,15 +78,14 @@ export function PortfolioGallery() {
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="relative aspect-[3/2] overflow-hidden bg-ink">
-                <Image
+              <div className="flex max-h-[78vh] items-center justify-center overflow-hidden bg-ink">
+                <img
                   src={active.src}
                   alt={active.alt}
-                  fill
-                  sizes="90vw"
-                  className="object-contain"
+                  className="max-h-[78vh] w-auto max-w-full object-contain"
                 />
               </div>
+
               <button
                 className="btn btn-dark mt-3 w-full justify-center sm:w-auto"
                 type="button"

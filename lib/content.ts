@@ -1,4 +1,9 @@
-export type PortfolioCategory = "Restaurant" | "Menu" | "Social" | "Campaign";
+export type PortfolioCategory =
+  | "Restaurant"
+  | "Menu"
+  | "Social"
+  | "Campaign"
+  | "Product";
 
 export type PortfolioImage = {
   src: string;
@@ -8,6 +13,12 @@ export type PortfolioImage = {
   useCase: string;
   featured?: boolean;
   orientation?: "wide" | "tall" | "square";
+};
+
+export type PortfolioSection = {
+  title: string;
+  description: string;
+  images: PortfolioImage[];
 };
 
 export const navItems = [
@@ -70,7 +81,7 @@ const categoryCycle: PortfolioCategory[] = [
   "Campaign",
 ];
 
-export const portfolioImages: PortfolioImage[] = imageNumbers.map((number, index) => {
+const foodPortfolioImages: PortfolioImage[] = imageNumbers.map((number, index) => {
   const padded = String(number).padStart(2, "0");
   const category = categoryCycle[index % categoryCycle.length];
 
@@ -92,6 +103,36 @@ export const portfolioImages: PortfolioImage[] = imageNumbers.map((number, index
   };
 });
 
+const productPortfolioImages: PortfolioImage[] = [1, 2, 3, 4, 5].map((number, index) => {
+  const padded = String(number).padStart(2, "0");
+
+  return {
+    src: `/photos/Highlights/PhotoSession-${padded}.jpg`,
+    alt: `Watch and knife photography sample ${padded} by YB Visuals`,
+    category: "Product",
+    title: `Product Study ${padded}`,
+    useCase: "Watch, knife, and product detail photography",
+    orientation: index === 0 ? "tall" : "wide",
+  };
+});
+
+export const portfolioSections: PortfolioSection[] = [
+  {
+    title: "Food Photography",
+    description: "",
+    images: foodPortfolioImages,
+  },
+  {
+    title: "Watch and Knife Photography",
+    description: "",
+    images: productPortfolioImages,
+  },
+];
+
+export const portfolioImages: PortfolioImage[] = portfolioSections.flatMap(
+  (section) => section.images,
+);
+
 export const featuredImages = portfolioImages.filter((image) => image.featured);
 
 export const founders = [
@@ -99,7 +140,7 @@ export const founders = [
     name: "Henry Yim",
     role: "Cofounder, Photography and Business Lead",
     image: "/photos/Henry%20Yim%20Headshot.jpg",
-    bio: "Henry brings years of photography experience and helps lead the business. He handles shoot planning, restaurant outreach, and on-site production.",
+    bio: "Henry is experienced in food/product photography and can tailor to the needs of the client whether that be photogrpaphy, videography, or editing.",
   },
   {
     name: "Madhava Bhadriraju",
